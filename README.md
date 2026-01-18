@@ -3,10 +3,10 @@
 **JIT Infrastructure & Self-Healing SDK for AI Agents**
 
 [![PyPI version](https://badge.fury.io/py/anvil-agent.svg)](https://pypi.org/project/anvil-agent/)
-[![Documentation](https://img.shields.io/badge/docs-anvil--sdk-blue)](https://anvil-sdk-docs.vercel.app)
+[![Documentation](https://img.shields.io/badge/docs-anvil--sdk-blue)](https://anvil-docs-theta.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**[Documentation](https://anvil-sdk-docs.vercel.app)** | **[PyPI](https://pypi.org/project/anvil-agent/)** | **[GitHub](https://github.com/Kart-ing/anvil-sdk)**
+**[Documentation](https://anvil-docs-theta.vercel.app/)** | **[PyPI](https://pypi.org/project/anvil-agent/)** | **[GitHub](https://github.com/Kart-ing/anvil-sdk)**
 
 Anvil prevents "Tool Rot" in AI agents. Instead of hard-coding tool implementations that break when APIs change, define **intents** and Anvil generates the code on the fly.
 
