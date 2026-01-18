@@ -1,0 +1,24 @@
+{
+  "get_weather": {
+    "name": "get_weather",
+    "intent": "Get the current weather for a given city using a free weather API",
+    "docs_url": "https://wttr.in/:help",
+    "hash": "8eb65325",
+    "version": "1.0",
+    "status": "active",
+    "created_at": "2026-01-17T18:50:05.889565",
+    "last_generated": "2026-01-17T18:50:05.889565",
+    "error_count": 0
+  },
+  "get_stock_price": {
+    "name": "get_stock_price",
+    "intent": "Has to get stock price of NVDIA",
+    "docs_url": "",
+    "hash": "451fef11",
+    "version": "1.4",
+    "status": "active",
+    "created_at": "2026-01-17T18:52:20.976318",
+    "last_generated": "2026-01-17T20:57:46.943971",
+    "error_count": 0
+  }
+}

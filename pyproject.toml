@@ -1,0 +1,107 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anvil-sdk"
+version = "0.1.0"
+description = "JIT Infrastructure & Self-Healing SDK for AI Agents - Generate tools on the fly with BYO API keys"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "Anvil Team" }
+]
+keywords = ["ai", "agents", "tools", "llm", "sdk", "jit", "self-healing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "httpx>=0.25.0",
+    "python-dotenv>=1.0.0",
+    "click>=8.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Kart-ing/anvil-sdk"
+Documentation = "https://github.com/Kart-ing/anvil-sdk#readme"
+Repository = "https://github.com/Kart-ing/anvil-sdk"
+
+[project.scripts]
+anvil = "anvil.cli:main"
+
+[project.optional-dependencies]
+# LLM Providers
+anthropic = [
+    "anthropic>=0.40.0",
+]
+openai = [
+    "openai>=1.0.0",
+]
+# Documentation fetching
+firecrawl = [
+    "firecrawl-py>=1.0.0",
+]
+# Framework adapters
+langchain = [
+    "langchain-core>=0.1.0",
+]
+crewai = [
+    "crewai>=0.1.0",
+]
+autogen = [
+    "autogen-core>=0.4.0",
+]
+openai-agents = [
+    "openai-agents>=0.0.1",
+]
+# Convenience bundles
+all-providers = [
+    "anthropic>=0.40.0",
+    "openai>=1.0.0",
+    "firecrawl-py>=1.0.0",
+]
+all-frameworks = [
+    "langchain-core>=0.1.0",
+    "crewai>=0.1.0",
+    "autogen-core>=0.4.0",
+    "openai-agents>=0.0.1",
+]
+all = [
+    "anthropic>=0.40.0",
+    "openai>=1.0.0",
+    "firecrawl-py>=1.0.0",
+    "langchain-core>=0.1.0",
+    "crewai>=0.1.0",
+    "autogen-core>=0.4.0",
+    "openai-agents>=0.0.1",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "mypy>=1.0.0",
+    "anthropic>=0.40.0",
+    "openai>=1.0.0",
+    "firecrawl-py>=1.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["anvil"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true

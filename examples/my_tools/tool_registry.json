@@ -1,0 +1,13 @@
+{
+  "hello": {
+    "name": "hello",
+    "intent": "Say hello",
+    "docs_url": null,
+    "hash": "6d995dba",
+    "version": "1.0",
+    "status": "active",
+    "created_at": "2026-01-17T19:56:44.572071",
+    "last_generated": "2026-01-17T19:56:44.572071",
+    "error_count": 0
+  }
+}
