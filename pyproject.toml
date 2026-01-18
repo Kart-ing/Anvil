@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "anvil-sdk"
+name = "anvil-agent"
 version = "0.1.0"
 description = "JIT Infrastructure & Self-Healing SDK for AI Agents - Generate tools on the fly with BYO API keys"
 readme = "README.md"
@@ -27,6 +27,7 @@ dependencies = [
     "httpx>=0.25.0",
     "python-dotenv>=1.0.0",
     "click>=8.0.0",
+    "rich>=13.0.0",
 ]
 
 [project.urls]
@@ -90,6 +91,8 @@ dev = [
     "anthropic>=0.40.0",
     "openai>=1.0.0",
     "firecrawl-py>=1.0.0",
+    "build>=1.0.0",
+    "twine>=5.0.0",
 ]
 
 [tool.pytest.ini_options]

@@ -11,29 +11,42 @@ Anvil prevents "Tool Rot" in AI agents. Instead of hard-coding tool implementati
 - **Multi-Provider** - Works with Claude, GPT, Grok (BYO API keys)
 - **Glass-Box** - All generated code is visible and editable
 - **Framework Adapters** - Works with LangChain, CrewAI, AutoGen, OpenAI Agents SDK
-
-## Installation
-
-```bash
-# Basic installation
-pip install anvil-sdk
-
-# With LLM provider
-pip install "anvil-sdk[anthropic]"  # or [openai]
-
-# With framework adapter
-pip install "anvil-sdk[langchain]"  # or [crewai], [autogen], [openai-agents]
-
-# Everything
-pip install "anvil-sdk[all]"
-```
+- **Beautiful CLI** - Professional terminal experience with Rich
 
 ## Quick Start
 
+### 1. Install
+
+```bash
+pip install anvil-agent
+```
+
+With Claude support (recommended):
+```bash
+pip install "anvil-agent[anthropic]"
+```
+
+### 2. Initialize Your Project
+
+```bash
+anvil init
+```
+
+This interactive wizard will:
+- Create the `anvil_tools/` directory for generated tools
+- Set up `.gitignore` to protect your API keys
+- Securely prompt for your API keys and save them to `.env`
+- Create an example script to get you started
+
+### 3. Start Building
+
 ```python
+from dotenv import load_dotenv
 from anvil import Anvil
 
-# Initialize (reads API key from ANTHROPIC_API_KEY env)
+load_dotenv()
+
+# Initialize Anvil
 anvil = Anvil(tools_dir="./anvil_tools")
 
 # Define what you want, not how
@@ -48,6 +61,36 @@ result = search_tool.run(query="Project Anvil")
 
 # Code is saved to ./anvil_tools/search_notion.py
 print(anvil.get_tool_code("search_notion"))
+```
+
+## CLI Commands
+
+```bash
+anvil init      # Initialize a new project with interactive setup
+anvil doctor    # Check system requirements and API keys
+anvil list      # List all generated tools
+anvil clean     # Clear tool cache to force regeneration
+anvil verify    # Verify tool code in sandbox
+```
+
+## Installation Options
+
+```bash
+# Basic installation
+pip install anvil-agent
+
+# With LLM provider
+pip install "anvil-agent[anthropic]"  # Claude (recommended)
+pip install "anvil-agent[openai]"     # GPT-4
+
+# With framework adapter
+pip install "anvil-agent[langchain]"
+pip install "anvil-agent[crewai]"
+pip install "anvil-agent[autogen]"
+pip install "anvil-agent[openai-agents]"
+
+# Everything
+pip install "anvil-agent[all]"
 ```
 
 ## Multi-Provider Support
@@ -100,6 +143,10 @@ anvil = Anvil(mode="cloud")  # Instant retrieval from global cache
 ## Development
 
 ```bash
+# Clone the repository
+git clone https://github.com/Kart-ing/anvil-sdk.git
+cd anvil-sdk
+
 # Install with dev dependencies
 pip install -e ".[dev]"
 
@@ -108,6 +155,19 @@ pytest -v
 
 # Run examples
 python examples/basic_usage.py --stub
+```
+
+## Building & Publishing
+
+```bash
+# Build the package
+python -m build
+
+# Upload to TestPyPI first
+twine upload --repository testpypi dist/*
+
+# Upload to PyPI
+twine upload dist/*
 ```
 
 ## License
