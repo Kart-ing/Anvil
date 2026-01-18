@@ -2,6 +2,12 @@
 
 **JIT Infrastructure & Self-Healing SDK for AI Agents**
 
+[![PyPI version](https://badge.fury.io/py/anvil-agent.svg)](https://pypi.org/project/anvil-agent/)
+[![Documentation](https://img.shields.io/badge/docs-anvil--sdk-blue)](https://anvil-sdk-docs.vercel.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+**[Documentation](https://anvil-sdk-docs.vercel.app)** | **[PyPI](https://pypi.org/project/anvil-agent/)** | **[GitHub](https://github.com/Kart-ing/anvil-sdk)**
+
 Anvil prevents "Tool Rot" in AI agents. Instead of hard-coding tool implementations that break when APIs change, define **intents** and Anvil generates the code on the fly.
 
 ## Features
@@ -156,6 +162,19 @@ pytest -v
 # Run examples
 python examples/basic_usage.py --stub
 ```
+
+## Documentation
+
+Full documentation is available at **[anvil-sdk-docs.vercel.app](https://anvil-sdk-docs.vercel.app)**
+
+- [Getting Started](https://anvil-sdk-docs.vercel.app/getting-started/introduction/)
+- [How It Works](https://anvil-sdk-docs.vercel.app/concepts/how-it-works/)
+- [Self-Healing](https://anvil-sdk-docs.vercel.app/concepts/self-healing/)
+- [LangChain Integration](https://anvil-sdk-docs.vercel.app/adapters/langchain/)
+- [CrewAI Integration](https://anvil-sdk-docs.vercel.app/adapters/crewai/)
+- [AutoGen Integration](https://anvil-sdk-docs.vercel.app/adapters/autogen/)
+- [OpenAI Agents SDK](https://anvil-sdk-docs.vercel.app/adapters/openai-agents/)
+- [API Reference](https://anvil-sdk-docs.vercel.app/reference/anvil/)
 
 ## Building & Publishing
 
