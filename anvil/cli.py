@@ -204,7 +204,10 @@ def init(dir: str, tools_dir: str, force: bool, skip_keys: bool) -> None:
     anthropic_key = ""
     firecrawl_key = ""
 
-    if not skip_keys:
+    # Check if we're in an interactive terminal
+    is_interactive = sys.stdin.isatty() and sys.stdout.isatty()
+
+    if not skip_keys and is_interactive:
         console.print() if RICH_AVAILABLE and console else click.echo()
         header("🔑 API Key Setup")
         console.print() if RICH_AVAILABLE and console else None
@@ -217,23 +220,29 @@ def init(dir: str, tools_dir: str, force: bool, skip_keys: bool) -> None:
             # Anthropic API Key
             console.print("[bold]Anthropic API Key[/bold] [dim](required for Claude)[/dim]")
             console.print("[dim]Get yours at: https://console.anthropic.com/settings/keys[/dim]")
-            anthropic_key = Prompt.ask(
-                "  API Key",
-                password=True,
-                default="",
-                show_default=False,
-            )
+            try:
+                anthropic_key = Prompt.ask(
+                    "  API Key",
+                    password=True,
+                    default="",
+                    show_default=False,
+                )
+            except Exception:
+                anthropic_key = ""
             console.print()
 
             # FireCrawl API Key
             console.print("[bold]FireCrawl API Key[/bold] [dim](optional, for doc fetching)[/dim]")
             console.print("[dim]Get yours at: https://www.firecrawl.dev/[/dim]")
-            firecrawl_key = Prompt.ask(
-                "  API Key",
-                password=True,
-                default="",
-                show_default=False,
-            )
+            try:
+                firecrawl_key = Prompt.ask(
+                    "  API Key",
+                    password=True,
+                    default="",
+                    show_default=False,
+                )
+            except Exception:
+                firecrawl_key = ""
             console.print()
         else:
             click.echo("Your API keys will be stored locally in .env and never shared.")
@@ -241,12 +250,18 @@ def init(dir: str, tools_dir: str, force: bool, skip_keys: bool) -> None:
 
             click.echo("Anthropic API Key (required for Claude)")
             click.echo("Get yours at: https://console.anthropic.com/settings/keys")
-            anthropic_key = click.prompt("  API Key", default="", hide_input=True, show_default=False)
+            try:
+                anthropic_key = click.prompt("  API Key", default="", hide_input=True, show_default=False)
+            except Exception:
+                anthropic_key = ""
             click.echo()
 
             click.echo("FireCrawl API Key (optional, for doc fetching)")
             click.echo("Get yours at: https://www.firecrawl.dev/")
-            firecrawl_key = click.prompt("  API Key", default="", hide_input=True, show_default=False)
+            try:
+                firecrawl_key = click.prompt("  API Key", default="", hide_input=True, show_default=False)
+            except Exception:
+                firecrawl_key = ""
             click.echo()
 
     # Step 4: Create .env file
