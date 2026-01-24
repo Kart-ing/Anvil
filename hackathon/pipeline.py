@@ -16,7 +16,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from dotenv import load_dotenv
 from rich.console import Console
+
+# Load API keys from .env
+load_dotenv()  # Load from current dir
+load_dotenv(Path(__file__).parent.parent / "examples" / ".env")  # Fallback
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
