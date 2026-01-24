@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "anvil-agent"
-version = "0.1.0"
+version = "0.1.1"
 description = "JIT Infrastructure & Self-Healing SDK for AI Agents - Generate tools on the fly with BYO API keys"
 readme = "README.md"
 requires-python = ">=3.10"

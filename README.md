@@ -13,6 +13,7 @@ Anvil prevents "Tool Rot" in AI agents. Instead of hard-coding tool implementati
 ## Features
 
 - **JIT Code Generation** - Generate tool code at runtime using LLMs
+- **Smart Parameterization** - Automatically generates reusable, parameterized tools (no hardcoded values)
 - **Self-Healing** - Automatic regeneration when tools fail
 - **Multi-Provider** - Works with Claude, GPT, Grok (BYO API keys)
 - **Glass-Box** - All generated code is visible and editable

@@ -27,6 +27,24 @@ CRITICAL RULES:
 7. Keep the code minimal and focused on the intent
 8. Import all required modules at the top of the file
 
+PARAMETERIZATION RULES (CRITICAL - DO NOT HARDCODE VALUES):
+9. NEVER hardcode domain-specific values. Examples of values that MUST be parameters:
+   - Stock symbols (NVDA, AAPL, TSLA) -> Use: kwargs.get('symbol')
+   - City names (New York, London) -> Use: kwargs.get('city')
+   - User IDs, account IDs, entity IDs -> Use: kwargs.get('user_id'), etc.
+   - URLs or endpoints (unless they are the API base URL) -> Use: kwargs.get('url')
+   - Search queries, keywords -> Use: kwargs.get('query')
+   - File paths -> Use: kwargs.get('file_path')
+   - Date ranges, timestamps -> Use: kwargs.get('start_date'), kwargs.get('end_date')
+   - Numeric thresholds, limits -> Use: kwargs.get('limit'), kwargs.get('threshold')
+10. Extract the GENERAL capability from specific intents:
+    - "Get NVIDIA stock price" -> Tool that gets ANY stock price with symbol as parameter
+    - "Search Notion for Project Anvil" -> Tool that searches Notion with query as parameter
+    - "Send email to john@example.com" -> Tool that sends email with recipient as parameter
+11. Always include validation for required parameters:
+    - Check if required kwargs exist: `if not kwargs.get('param_name'): return {{"error": "param_name is required"}}`
+    - Document parameters in the docstring with their types and descriptions
+
 IMPORTANT - API KEY HANDLING:
 When the tool requires an API key or secret, follow this EXACT pattern:
 ```python
@@ -66,6 +84,8 @@ CRITICAL RULES:
 2. Keep the same `run(**kwargs)` signature
 3. Fix the specific error - don't rewrite everything
 4. If the error is about missing data/API issues, add proper error handling
+5. Check for hardcoded values - if you see hardcoded domain-specific values (stock symbols, city names, IDs, URLs, queries, etc.), convert them to kwargs.get() parameters
+6. Ensure required parameters have validation: `if not kwargs.get('param'): return {{"error": "param is required"}}`
 
 OUTPUT FORMAT:
 ```python
@@ -253,7 +273,8 @@ class LocalGenerator(BaseGenerator):
 TOOL NAME: {config.name}
 INTENT: {config.intent}
 
-Remember: Output ONLY the Python code block with a `run(**kwargs)` function."""
+Remember: Output ONLY the Python code block with a `run(**kwargs)` function.
+IMPORTANT: Generate a REUSABLE, PARAMETERIZED tool - do not hardcode any domain-specific values from the intent."""
 
         # Call LLM provider
         provider = self._get_provider()
