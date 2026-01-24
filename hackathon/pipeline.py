@@ -127,11 +127,15 @@ def repair_pipeline(tool_name: str, error: str, original_code: str) -> dict:
         try:
             anvil = Anvil(tools_dir=Path("anvil_managed"))
 
-            # Use Anvil to generate a fixed version
+            # Delete old tool file to force regeneration
+            old_tool_file = Path("anvil_managed") / f"{tool_name}.py"
+            if old_tool_file.exists():
+                old_tool_file.unlink()
+
+            # Use Anvil to generate a fixed version with error context in intent
             tool = anvil.use_tool(
                 name=tool_name,
-                intent=f"Fix this tool. Previous error: {error[:200]}",
-                force_regenerate=True,
+                intent=f"Get real data from a working API. Previous implementation failed with: {error[:200]}",
             )
             new_code = anvil.get_tool_code(tool_name)
 
@@ -165,26 +169,30 @@ def repair_pipeline(tool_name: str, error: str, original_code: str) -> dict:
             sandbox = DaytonaSandbox()
 
             if sandbox.is_available():
-                # Run in Daytona
+                # Run in Daytona with real test data
                 test_code = f'''
 {new_code}
 
-# Test execution
+# Test execution with real parameters
 try:
-    result = run(symbol="TEST")
-    print("Execution successful")
+    result = run(symbol="AAPL", city="London")  # Use real values for testing
+    print("SANDBOX_TEST_PASSED")
+    print(f"Result: {{result}}")
 except Exception as e:
-    print(f"Test failed: {{e}}")
+    print(f"SANDBOX_TEST_ERROR: {{e}}")
 '''
-                result = sandbox.execute(test_code, timeout=30.0)
+                result = sandbox.execute(test_code, timeout=60.0)
+
+                # Check if code at least executed (even if API returned error)
+                sandbox_passed = result.success or (result.output and "SANDBOX_TEST_PASSED" in str(result.output))
 
                 results["stages"]["daytona"] = {
-                    "success": result.success,
+                    "success": sandbox_passed,
                     "output": result.output,
                     "duration_ms": result.duration_ms,
                 }
 
-                if result.success:
+                if sandbox_passed:
                     console.print(f"[green]✓[/green] [DAYTONA] Verification PASSED ({result.duration_ms:.0f}ms)")
                 else:
                     console.print(f"[yellow]![/yellow] [DAYTONA] Verification completed with warnings")

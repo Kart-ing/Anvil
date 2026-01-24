@@ -1,0 +1,24 @@
+{
+  "stock_tool": {
+    "name": "stock_tool",
+    "intent": "Get real data from a working API. Previous implementation failed with: HTTPSConnectionPool(host='fake-stock-api.com', port=443): Max retries exceeded with url: /price/TEST (Caused by NameResolutionError(\"HTTPSConnection(host='fake-stock-api.com', port=443): Failed to res",
+    "docs_url": null,
+    "hash": "e532310d",
+    "version": "1.1",
+    "status": "active",
+    "created_at": "2026-01-24T11:21:17.346756",
+    "last_generated": "2026-01-24T11:25:34.147336",
+    "error_count": 0
+  },
+  "weather_tool": {
+    "name": "weather_tool",
+    "intent": "Get real data from a working API. Previous implementation failed with: HTTPSConnectionPool(host='api.weather.broken', port=443): Max retries exceeded with url: /v1/Test%20City (Caused by NameResolutionError(\"HTTPSConnection(host='api.weather.broken', port=443): Failed to",
+    "docs_url": null,
+    "hash": "255055a4",
+    "version": "1.1",
+    "status": "active",
+    "created_at": "2026-01-24T11:21:36.257884",
+    "last_generated": "2026-01-24T11:25:50.219237",
+    "error_count": 0
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "created": "2026-01-24T11:25:22.033481",
+  "agent": {
+    "name": "my_agent",
+    "tools_dir": "my_agent/tools",
+    "managed_dir": "anvil_managed"
+  },
+  "tools": [
+    {
+      "name": "stock_tool",
+      "source_file": "my_agent/tools/stock_tool.py",
+      "description": "Legacy stock tool - intentionally broken for demo.",
+      "status": "broken",
+      "last_check": "2026-01-24T11:25:41.846357",
+      "error": "Repair failed",
+      "managed_file": "anvil_managed/stock_tool.py"
+    },
+    {
+      "name": "weather_tool",
+      "source_file": "my_agent/tools/weather_tool.py",
+      "description": "Legacy weather tool - intentionally broken for demo.",
+      "status": "broken",
+      "last_check": "2026-01-24T11:25:54.027501",
+      "error": "Repair failed",
+      "managed_file": "anvil_managed/weather_tool.py"
+    }
+  ],
+  "stats": {
+    "healthy": 0,
+    "broken": 2,
+    "repairing": 0,
+    "pending": 0,
+    "total": 2
+  }
+}

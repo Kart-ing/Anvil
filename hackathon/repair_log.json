@@ -1,0 +1,164 @@
+[
+  {
+    "type": "repair_failed",
+    "stage": "anvil",
+    "tool": "stock_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": false,
+        "error": "Anvil.use_tool() got an unexpected keyword argument 'force_regenerate'"
+      }
+    },
+    "timestamp": "2026-01-24T11:16:35.099533"
+  },
+  {
+    "type": "repair_failed",
+    "stage": "anvil",
+    "tool": "weather_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": false,
+        "error": "Anvil.use_tool() got an unexpected keyword argument 'force_regenerate'"
+      }
+    },
+    "timestamp": "2026-01-24T11:16:35.114443"
+  },
+  {
+    "type": "repair_failed",
+    "stage": "anvil",
+    "tool": "stock_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": false,
+        "error": "Anvil.use_tool() got an unexpected keyword argument 'force_regenerate'"
+      }
+    },
+    "timestamp": "2026-01-24T11:19:21.559798"
+  },
+  {
+    "type": "repair_failed",
+    "stage": "anvil",
+    "tool": "weather_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": false,
+        "error": "Anvil.use_tool() got an unexpected keyword argument 'force_regenerate'"
+      }
+    },
+    "timestamp": "2026-01-24T11:19:21.565247"
+  },
+  {
+    "type": "repair_failed",
+    "stage": "anvil",
+    "tool": "stock_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": false,
+        "error": "Anvil.use_tool() got an unexpected keyword argument 'force_regenerate'"
+      }
+    },
+    "timestamp": "2026-01-24T11:20:19.677267"
+  },
+  {
+    "type": "repair_failed",
+    "stage": "anvil",
+    "tool": "weather_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": false,
+        "error": "Anvil.use_tool() got an unexpected keyword argument 'force_regenerate'"
+      }
+    },
+    "timestamp": "2026-01-24T11:20:19.683680"
+  },
+  {
+    "type": "repair_complete",
+    "tool": "stock_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": true,
+        "message": "Patch generated"
+      },
+      "daytona": {
+        "success": false,
+        "output": null,
+        "duration_ms": 4918.255083961412
+      },
+      "coderabbit": {
+        "approved": false,
+        "review": "**NEEDS REVIEW:** While the code properly retrieves the API key from environment variables and includes basic input validation, there are several security concerns. The API key is passed directly in URL parameters which may be logged in server access logs, and there's insufficient input sanitization on the symbol parameter that could potentially be exploited for injection attacks. Additionally, the error messages leak sensitive information about the API key's existence and the internal system structure, which could aid attackers in reconnaissance.\n\n**Recommendations:**\n- Consider using POST requests or headers for API key transmission\n- Implement stricter input validation with allowlists for stock symbols\n- Sanitize error messages to avoid information disclosure"
+      }
+    },
+    "timestamp": "2026-01-24T11:21:28.572262"
+  },
+  {
+    "type": "repair_complete",
+    "tool": "weather_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": true,
+        "message": "Patch generated"
+      },
+      "daytona": {
+        "success": false,
+        "output": null,
+        "duration_ms": 0.5585419712588191
+      },
+      "coderabbit": {
+        "approved": true,
+        "review": "APPROVED: The code demonstrates good security practices with proper API key handling through environment variables, adequate input validation for required parameters, and secure network requests with timeout protection. The error handling is comprehensive without exposing sensitive information, and the use of HTTPS for the API endpoint (though the example shows HTTP, OpenWeatherMap supports HTTPS) would further enhance security. The input sanitization through URL parameters helps prevent injection attacks, and the structured error responses avoid information leakage."
+      }
+    },
+    "timestamp": "2026-01-24T11:21:40.824791"
+  },
+  {
+    "type": "repair_complete",
+    "tool": "stock_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": true,
+        "message": "Patch generated"
+      },
+      "daytona": {
+        "success": null,
+        "output": null,
+        "duration_ms": 2606.624250067398
+      },
+      "coderabbit": {
+        "approved": true,
+        "review": "APPROVED: The code demonstrates good security practices with proper API key handling through environment variables (avoiding hardcoded secrets), basic input validation for the symbol parameter, and safe network request handling with timeout and exception management. The input validation could be enhanced with symbol format validation (alphanumeric check) to prevent potential injection attempts, but the current implementation using URL parameters with the requests library provides reasonable protection against common attack vectors."
+      }
+    },
+    "timestamp": "2026-01-24T11:25:41.844509"
+  },
+  {
+    "type": "repair_complete",
+    "tool": "weather_tool",
+    "success": false,
+    "stages": {
+      "anvil": {
+        "success": true,
+        "message": "Patch generated"
+      },
+      "daytona": {
+        "success": null,
+        "output": null,
+        "duration_ms": 0.5174170946702361
+      },
+      "coderabbit": {
+        "approved": true,
+        "review": "APPROVED: The new code demonstrates good security practices with proper API key handling through environment variables, preventing credential exposure in source code. Input validation is implemented to check for required parameters, and the code includes appropriate timeout settings and exception handling for network requests. The use of parameterized requests and structured error handling helps prevent injection attacks and information leakage."
+      }
+    },
+    "timestamp": "2026-01-24T11:25:54.026438"
+  }
+]
