@@ -63,6 +63,15 @@ autogen = [
 openai-agents = [
     "openai-agents>=0.0.1",
 ]
+# Cloud sandboxes
+daytona = [
+    "daytona-sdk>=0.10.0",
+]
+# Hackathon demo
+hackathon = [
+    "daytona-sdk>=0.10.0",
+    "streamlit>=1.30.0",
+]
 # Convenience bundles
 all-providers = [
     "anthropic>=0.40.0",

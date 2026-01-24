@@ -5,7 +5,7 @@ generated code before saving it to the local filesystem.
 
 Supported drivers:
 1. DockerSandbox - Uses Docker containers for isolation
-2. E2BSandbox - Uses E2B cloud sandboxes (optional)
+2. DaytonaSandbox - Uses Daytona secure cloud sandboxes
 3. LocalSandbox - Restricted local execution (fallback, less secure)
 """
 
@@ -418,6 +418,112 @@ class LocalSandbox(SandboxDriver):
                 pass
 
 
+class DaytonaSandbox(SandboxDriver):
+    """Daytona-based sandbox for secure cloud code execution.
+
+    Uses Daytona's secure sandbox environments designed specifically
+    for running AI-generated code safely.
+
+    Requires: pip install daytona
+    API Key: Set DAYTONA_API_KEY environment variable
+    """
+
+    def __init__(
+        self,
+        policy: SecurityPolicy | None = None,
+        api_key: str | None = None,
+    ):
+        super().__init__(policy)
+        self.api_key = api_key or os.environ.get("DAYTONA_API_KEY")
+        self._client: Any = None
+
+    def _get_client(self) -> Any:
+        """Lazy-load Daytona client."""
+        if self._client is None:
+            if not self.api_key:
+                raise ValueError(
+                    "Daytona API key required. Set DAYTONA_API_KEY env or pass api_key."
+                )
+            try:
+                from daytona_sdk import Daytona, DaytonaConfig
+            except ImportError:
+                from daytona import Daytona, DaytonaConfig
+
+            self._client = Daytona(DaytonaConfig(api_key=self.api_key))
+        return self._client
+
+    def is_available(self) -> bool:
+        """Check if Daytona is available (API key set)."""
+        return bool(self.api_key)
+
+    def execute(self, code: str, timeout: float = 30.0) -> SandboxResult:
+        """Execute code in a Daytona sandbox.
+
+        Args:
+            code: Python code to execute
+            timeout: Maximum execution time in seconds
+
+        Returns:
+            SandboxResult with execution details
+        """
+        if not self.is_available():
+            return SandboxResult(
+                success=False,
+                error="Daytona API key not configured. Set DAYTONA_API_KEY.",
+            )
+
+        start_time = time.perf_counter()
+        sandbox = None
+
+        try:
+            try:
+                from daytona_sdk import CreateSandboxParams
+            except ImportError:
+                from daytona import CreateSandboxParams
+
+            client = self._get_client()
+
+            # Create sandbox
+            sandbox = client.create(CreateSandboxParams(language="python"))
+
+            # Execute code
+            result = sandbox.process.code_run(code)
+
+            duration_ms = (time.perf_counter() - start_time) * 1000
+
+            # Check if execution succeeded
+            if hasattr(result, 'exit_code') and result.exit_code != 0:
+                return SandboxResult(
+                    success=False,
+                    output=getattr(result, 'logs', None),
+                    error=getattr(result, 'logs', str(result)),
+                    exit_code=result.exit_code,
+                    duration_ms=duration_ms,
+                )
+
+            return SandboxResult(
+                success=True,
+                output=getattr(result, 'logs', str(result)),
+                exit_code=0,
+                duration_ms=duration_ms,
+            )
+
+        except Exception as e:
+            duration_ms = (time.perf_counter() - start_time) * 1000
+            return SandboxResult(
+                success=False,
+                error=f"Daytona execution failed: {e}",
+                duration_ms=duration_ms,
+            )
+        finally:
+            # Clean up sandbox
+            if sandbox is not None:
+                try:
+                    self._get_client().delete(sandbox)
+                except Exception:
+                    pass  # Best effort cleanup
+
+
 class SandboxManager:
     """Manages sandbox drivers and provides unified interface."""
 
@@ -425,26 +531,36 @@ class SandboxManager:
         self,
         policy: SecurityPolicy | None = None,
         prefer_docker: bool = True,
+        prefer_daytona: bool = False,
+        daytona_api_key: str | None = None,
     ):
         """Initialize sandbox manager.
 
         Args:
             policy: Security policy to enforce
             prefer_docker: If True, use Docker when available
+            prefer_daytona: If True, use Daytona when available (highest priority)
+            daytona_api_key: Optional Daytona API key
         """
         self.policy = policy or SecurityPolicy()
         self.prefer_docker = prefer_docker
+        self.prefer_daytona = prefer_daytona
 
         # Initialize drivers
         self._docker = DockerSandbox(policy=self.policy)
         self._local = LocalSandbox(policy=self.policy)
+        self._daytona = DaytonaSandbox(policy=self.policy, api_key=daytona_api_key)
 
     def get_driver(self) -> SandboxDriver:
         """Get the best available sandbox driver.
 
+        Priority: Daytona (if preferred) > Docker (if preferred) > Local
+
         Returns:
             SandboxDriver instance
         """
+        if self.prefer_daytona and self._daytona.is_available():
+            return self._daytona
         if self.prefer_docker and self._docker.is_available():
             return self._docker
         return self._local
@@ -480,11 +596,18 @@ class SandboxManager:
         Returns:
             Dict with driver availability info
         """
+        # Determine active driver
+        if self.prefer_daytona and self._daytona.is_available():
+            active = "daytona"
+        elif self.prefer_docker and self._docker.is_available():
+            active = "docker"
+        else:
+            active = "local"
+
         return {
+            "daytona_available": self._daytona.is_available(),
             "docker_available": self._docker.is_available(),
-            "active_driver": "docker" if (
-                self.prefer_docker and self._docker.is_available()
-            ) else "local",
+            "active_driver": active,
             "policy": {
                 "allow_network": self.policy.allow_network,
                 "allow_filesystem_write": self.policy.allow_filesystem_write,
