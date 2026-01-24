@@ -3,6 +3,7 @@
 from anvil.chain import ToolChain
 from anvil.core import Anvil, Tool
 from anvil.credentials import CredentialResolver
+from anvil.ingest import IngestManifest, ToolAnalyzer, ToolInfo, ToolIngester
 from anvil.generators import (
     BaseGenerator,
     GeneratorMode,
@@ -21,6 +22,11 @@ __all__ = [
     "Anvil",
     "Tool",
     "ToolChain",
+    # Ingest
+    "ToolIngester",
+    "ToolAnalyzer",
+    "ToolInfo",
+    "IngestManifest",
     # Models
     "InputParam",
     "ToolConfig",

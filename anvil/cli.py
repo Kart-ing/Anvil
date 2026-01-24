@@ -2,6 +2,7 @@
 
 Commands:
     anvil init      - Initialize a new Anvil project with interactive setup
+    anvil ingest    - Scan and register existing tools for Anvil management
     anvil doctor    - Check system requirements and configuration
     anvil list      - List all cached tools
     anvil clean     - Clear the tool cache
@@ -359,6 +360,164 @@ if __name__ == "__main__":
         else:
             click.echo(f"  1. Run: python example.py")
             click.echo(f"  2. Check your tools in: {tools_path}\n")
+
+
+@cli.command()
+@click.argument("source_dir", type=click.Path(exists=True))
+@click.option(
+    "--managed-dir", "-m",
+    default="./anvil_managed",
+    help="Directory to store managed tools (default: ./anvil_managed)",
+)
+@click.option(
+    "--manifest", "-o",
+    default="./anvil_manifest.json",
+    help="Path to manifest file (default: ./anvil_manifest.json)",
+)
+@click.option(
+    "--no-wrap",
+    is_flag=True,
+    help="Don't copy tools to managed directory (just analyze)",
+)
+@click.option(
+    "--json", "as_json",
+    is_flag=True,
+    help="Output as JSON",
+)
+def ingest(source_dir: str, managed_dir: str, manifest: str, no_wrap: bool, as_json: bool) -> None:
+    """Scan and register existing tools for Anvil management.
+
+    Analyzes Python files in SOURCE_DIR, identifies tool functions,
+    and registers them with Anvil for monitoring and self-healing.
+
+    Example:
+        anvil ingest ./my_agent/tools
+        anvil ingest ./legacy_tools --managed-dir ./anvil_tools
+    """
+    from anvil.ingest import ToolIngester
+
+    source_path = Path(source_dir)
+
+    if as_json:
+        # Silent JSON mode
+        ingester = ToolIngester(
+            source_dir=source_path,
+            managed_dir=managed_dir,
+            manifest_file=manifest,
+        )
+        result = ingester.scan_and_register(wrap=not no_wrap)
+        click.echo(json.dumps(result.to_dict(), indent=2))
+        return
+
+    # Pretty output mode
+    print_welcome_banner()
+
+    if RICH_AVAILABLE and console:
+        console.print(Panel.fit(
+            "[bold blue]Tool Ingestion[/bold blue]\n"
+            "[dim]Scanning for existing tools to manage[/dim]",
+            border_style="blue",
+        ))
+        console.print()
+        console.print(f"[dim]Source:[/dim] {source_path.resolve()}")
+        console.print(f"[dim]Managed:[/dim] {Path(managed_dir).resolve()}")
+        console.print()
+    else:
+        click.echo("Tool Ingestion")
+        click.echo(f"Source: {source_path.resolve()}")
+        click.echo(f"Managed: {Path(managed_dir).resolve()}\n")
+
+    # Run ingestion
+    header("Scanning for tools...")
+    if RICH_AVAILABLE and console:
+        console.print()
+
+    ingester = ToolIngester(
+        source_dir=source_path,
+        managed_dir=managed_dir,
+        manifest_file=manifest,
+    )
+
+    # First scan to show what we found
+    tools = ingester.scan()
+
+    if not tools:
+        warning("No Python tools found in source directory.")
+        info("Tools must have a run() function to be recognized.")
+        return
+
+    # Display discovered tools
+    if RICH_AVAILABLE and console:
+        table = Table(title=f"Discovered Tools ({len(tools)})", box=box.ROUNDED)
+        table.add_column("Status", width=3, justify="center")
+        table.add_column("Name", style="bold")
+        table.add_column("Description", style="dim", max_width=40)
+        table.add_column("Parameters", style="cyan")
+
+        for tool in tools:
+            if tool.has_run_function:
+                status_icon = "[green]✓[/green]"
+            else:
+                status_icon = "[red]✗[/red]"
+
+            desc = tool.description[:40] + "..." if len(tool.description) > 40 else tool.description
+            params = ", ".join(tool.parameters) if tool.parameters else "-"
+
+            table.add_row(status_icon, tool.name, desc or "[dim]No description[/dim]", params)
+
+        console.print(table)
+        console.print()
+    else:
+        click.echo(f"\nDiscovered Tools ({len(tools)}):\n")
+        for tool in tools:
+            status = "✓" if tool.has_run_function else "✗"
+            click.echo(f"  {status} {tool.name}")
+            if tool.description:
+                click.echo(f"      {tool.description[:60]}")
+        click.echo()
+
+    # Register and wrap
+    if no_wrap:
+        info("Skipping wrap (--no-wrap flag set)")
+        result = ingester.scan_and_register(wrap=False)
+    else:
+        header("Wrapping tools for Anvil management...")
+        if RICH_AVAILABLE and console:
+            console.print()
+
+        result = ingester.scan_and_register(wrap=True)
+
+        for tool in result.tools:
+            if tool.get("managed_file"):
+                success(f"{tool['name']} → {tool['managed_file']}")
+
+    # Save manifest
+    if RICH_AVAILABLE and console:
+        console.print()
+        console.print(f"[green]✓[/green] Manifest saved: {manifest}")
+        console.print()
+
+        # Summary panel
+        stats = result.to_dict()["stats"]
+        summary = Text()
+        summary.append("Ingestion Complete\n\n", style="bold green")
+        summary.append(f"  Total tools:  {stats['total']}\n")
+        summary.append(f"  Ready:        {stats['pending']}\n")
+        if stats['broken'] > 0:
+            summary.append(f"  Broken:       {stats['broken']}\n", style="red")
+
+        summary.append("\n")
+        summary.append("Next steps:\n", style="bold")
+        summary.append("  1. Review tools in: ", style="dim")
+        summary.append(f"{managed_dir}\n", style="cyan")
+        summary.append("  2. Run health checks with your agent\n", style="dim")
+
+        console.print(Panel(summary, border_style="green"))
+        console.print()
+    else:
+        stats = result.to_dict()["stats"]
+        click.echo(f"\n✓ Manifest saved: {manifest}")
+        click.echo(f"\nTotal: {stats['total']} | Ready: {stats['pending']} | Broken: {stats['broken']}\n")
 
 
 @cli.command()
